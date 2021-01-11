@@ -10,8 +10,11 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memoryMemberRepository;
-    public MemberService(MemberRepository memoryMemberRepository) { this.memoryMemberRepository = memoryMemberRepository;
+
+    public MemberService(MemberRepository memoryMemberRepository) {
+        this.memoryMemberRepository = memoryMemberRepository;
     }
+
 
     public Long join (Member member){
 
