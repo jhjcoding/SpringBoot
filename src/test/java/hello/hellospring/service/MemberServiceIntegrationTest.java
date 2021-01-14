@@ -1,0 +1,63 @@
+package hello.hellospring.service;
+
+import hello.hellospring.domain.Member;
+import hello.hellospring.repository.MemberRepository;
+import hello.hellospring.repository.MemoryMemberRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+@SpringBootTest
+@Transactional
+class MemberServiceIntegrationTest {
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
+
+    @Test
+    void 회원가입() {
+
+        System.out.println("[회원가입] memberRepository :" + memberRepository);
+
+        //Given
+        Member member = new Member();
+        member.setName("spring");
+
+        //When
+        Long memberId = memberService.join(member);
+
+        //then
+        Member result = memberRepository.findById(memberId).get();
+        Assertions.assertEquals(member.getName(), result.getName());
+    }
+
+
+    @Test public void 중복_회원_예외() throws Exception {
+
+        System.out.println("[중복_회원_예외] memberRepository :" + memberRepository);
+
+        //Given
+        Member member1 = new Member();
+        member1.setName("spring");
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        //When
+        memberService.join(member1);
+        try{
+            memberService.join(member2);
+            fail("[테스트 실패] 예외 미발생");
+        }catch (IllegalStateException e){
+            System.out.println("[테스트 성공]예외 발생 :");
+            org.assertj.core.api.Assertions.assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니당.");
+        }
+
+
+
+    }
+}
